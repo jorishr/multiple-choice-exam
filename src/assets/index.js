@@ -6,8 +6,12 @@
 
     submitBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const score = getScore();
-        updateScoreboard(score);
+        if(validate()){
+            const score = getScore();
+            updateScoreboard(score);
+            clearFields();
+            hideQuestions();   
+        };
     });
 
     function generateQuestions(){
@@ -34,15 +38,23 @@
             const inputElems = fieldsets.querySelectorAll('input');
             const labelElems = fieldsets.querySelectorAll('label');
             const choices    = examData[i].choices;
+
             for(let j = 0; j < choices.length; j++){
                 inputElems[j].value = choices[j];
-                inputElems[j].setAttribute('name', `question${i + 1}`);   //  i not j
+                inputElems[j].setAttribute('name', `question${i + 1}`);//  i not j
                 labelElems[j].setAttribute('for', `question${i + 1}`);
                 labelElems[j].innerHTML = choices[j];
             }
-        }
-    
+        }   
     };
+
+    function validate(){
+        const options = Array.from(document.querySelectorAll('input'));
+        const answers = options.filter(el => el.checked);
+        if(answers.length !== examData.length){
+            return confirm('You did not answer all questions. Are you sure you want to submit your exam?');
+        } else return true;
+    }
 
     function getScore(){
         let score = 0;
@@ -51,15 +63,14 @@
         for(let i = 0; i < answer.length; i++){
             if(answer[i].value === examData[i].answer) score++;
         }
-        clearFields();
         return score;
     }
 
     function updateScoreboard(score){
-        document.querySelector('.score__number').innerText = `${score} / ${examData.length}`;
+        document.querySelector('.score__title').innerText = `Your score is: ${score} / ${examData.length}`;
         score >= Math.ceil(examData.length / 2) ? 
-            document.querySelector('.score__evaluation').innerText = `You passed`
-            : document.querySelector('.score__evaluation').innerText = `You failed`
+            document.querySelector('.score__evaluation').innerText = `You passed the exam.`
+            : document.querySelector('.score__evaluation').innerText = `You failed the exam.`
     }
 
     function clearFields(){
@@ -68,4 +79,7 @@
             .forEach(input => input.checked = false);
     }
 
+    function hideQuestions(){
+        document.querySelector('form').style.display = 'none';
+    }
 })();

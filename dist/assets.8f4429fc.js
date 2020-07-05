@@ -146,9 +146,14 @@ module.exports = [{
   var submitBtn = document.querySelector('form > button');
   generateQuestions();
   submitBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    var score = getScore();
-    updateScoreboard(score);
+    e.preventDefault(); //console.log(validate())
+
+    if (validate()) {
+      var score = getScore();
+      updateScoreboard(score);
+    }
+
+    ;
   });
 
   function generateQuestions() {
@@ -176,6 +181,17 @@ module.exports = [{
 
   ;
 
+  function validate() {
+    var options = Array.from(document.querySelectorAll('input'));
+    var answers = options.filter(function (el) {
+      return el.checked;
+    });
+
+    if (answers.length !== examData.length) {
+      return confirm('You did not answer all questions. Are you sure you want to submit your exam?');
+    } else return true;
+  }
+
   function getScore() {
     var score = 0;
     var options = Array.from(document.querySelectorAll('input'));
@@ -188,12 +204,13 @@ module.exports = [{
     }
 
     clearFields();
+    hideQuestions();
     return score;
   }
 
   function updateScoreboard(score) {
-    document.querySelector('.score__number').innerText = "".concat(score, " / ").concat(examData.length);
-    score >= Math.ceil(examData.length / 2) ? document.querySelector('.score__evaluation').innerText = "You passed" : document.querySelector('.score__evaluation').innerText = "You failed";
+    document.querySelector('.score__title').innerText = "Your score is: ".concat(score, " / ").concat(examData.length);
+    score >= Math.ceil(examData.length / 2) ? document.querySelector('.score__evaluation').innerText = "You passed the exam." : document.querySelector('.score__evaluation').innerText = "You failed the exam.";
   }
 
   function clearFields() {
@@ -203,6 +220,10 @@ module.exports = [{
     }).forEach(function (input) {
       return input.checked = false;
     });
+  }
+
+  function hideQuestions() {
+    document.querySelector('form').style.display = 'none';
   }
 })();
 },{"./exam-data/question.json":"assets/exam-data/question.json"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -233,7 +254,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59256" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54463" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
