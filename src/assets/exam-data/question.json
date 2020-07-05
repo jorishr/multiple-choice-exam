@@ -1,0 +1,28 @@
+[
+    {
+        "question": "How much is 3 x 1?",
+        "answer": "3",
+        "choices": [3, 9, 12]
+    },   
+    {
+        "question": "How much is 3 x 2?",
+        "answer": "6",
+        "choices": [6, 15, 3]
+    },   
+    {
+        "question": "How much is 3 x 3?",
+        "answer": "9",
+        "choices": [6, 9, 12]
+    },   
+    {
+        "question": "How much is 3 x 4?",
+        "answer": "12",
+        "choices": [3, 9, 12]
+    },   
+    {
+        "question": "How much is 3 x 5?",
+        "answer": "15",
+        "choices": [3, 15, 12]
+    }   
+
+]

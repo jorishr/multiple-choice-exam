@@ -1,0 +1,15 @@
+{
+  "name": "mutliple_choice-exam",
+  "version": "1.0.0",
+  "description": "Multiple choice exam",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx parcel src/index.html",
+    "test": "jest"
+  },
+  "author": "Joris Raymaekers <joris@jorisr.com> (jorisr.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
+  }
+}
