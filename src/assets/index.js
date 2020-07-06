@@ -1,8 +1,13 @@
 (() => {
     const examData  = require('./exam-data/question.json');
+    const starttBtn = document.querySelector('button.start');
     const submitBtn = document.querySelector('form > button');
     
-    generateQuestions();
+    starttBtn.addEventListener('click', (e) => {
+        generateQuestions();
+        startCountDown(120);
+        hideInstructions()
+    })
 
     submitBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -47,6 +52,47 @@
             }
         }   
     };
+    //display first, interval will start after one second has elapsed
+    //interval: check every second how much time left
+    function startCountDown(time){
+        const now    = Date.now();  //ms
+        const target = now + (time * 1000); //  seconds to ms, timestamp
+        const targetFormatted = Math.round((target - now) / 1000);  //  ms to s 
+
+        displayCountdown(targetFormatted);
+
+        const interval = setInterval(() => {
+            const timeLeft = target - Date.now();
+            const timeLeftFormatted = Math.abs(Math.round(timeLeft / 1000));
+
+            displayCountdown(timeLeftFormatted);
+
+            if(timeLeft < 0) {
+                clearInterval(interval);
+                const score = getScore();
+                updateScoreboard(score);
+                clearFields();
+                hideQuestions();   
+            }
+        }, 1000);
+    }
+
+    function displayCountdown(time){
+        const minutesLeft = Math.floor(time / 60);
+        const secondsLeft = time % 60;
+        const display = `${minutesLeft}:${secondsLeft.toString().padStart(2,0)}`;
+        const displayCountdown = document.querySelector('.countdown');
+        displayCountdown.textContent = display;
+        displayCountdown.style.position = 'fixed';
+        displayCountdown.style.left = '50%';
+        displayCountdown.style.top = '10%';
+    }
+
+    function hideInstructions(){
+        document.querySelector('.instructions').style.display = 'none';
+        //show submit btn
+        submitBtn.style.display = 'block';
+    }
 
     function validate(){
         const options = Array.from(document.querySelectorAll('input'));
@@ -81,5 +127,6 @@
 
     function hideQuestions(){
         document.querySelector('form').style.display = 'none';
+        document.querySelector('.countdown').style.display = 'none';
     }
 })();

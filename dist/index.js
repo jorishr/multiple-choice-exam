@@ -117,163 +117,74 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"assets/exam-data/question.json":[function(require,module,exports) {
-module.exports = [{
-  "question": "How much is 3 x 1?",
-  "answer": "3",
-  "choices": [3, 9, 12]
-}, {
-  "question": "How much is 3 x 2?",
-  "answer": "6",
-  "choices": [6, 15, 3]
-}, {
-  "question": "How much is 3 x 3?",
-  "answer": "9",
-  "choices": [6, 9, 12]
-}, {
-  "question": "How much is 3 x 4?",
-  "answer": "12",
-  "choices": [3, 9, 12]
-}, {
-  "question": "How much is 3 x 5?",
-  "answer": "15",
-  "choices": [3, 15, 12]
-}];
-},{}],"assets/index.js":[function(require,module,exports) {
-(function () {
-  var examData = require('./exam-data/question.json');
+})({"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
 
-  var starttBtn = document.querySelector('button.start');
-  var submitBtn = document.querySelector('form > button');
-  starttBtn.addEventListener('click', function (e) {
-    generateQuestions();
-    startCountDown(120);
-    hideInstructions();
-  });
-  submitBtn.addEventListener('click', function (e) {
-    e.preventDefault();
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
 
-    if (validate()) {
-      var score = getScore();
-      updateScoreboard(score);
-      clearFields();
-      hideQuestions();
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
     }
+  }
 
-    ;
-  });
+  return '/';
+}
 
-  function generateQuestions() {
-    for (var i = 0; i < examData.length; i++) {
-      var questionList = document.querySelector('.question-list');
-      var questionBox = document.createElement('div');
-      questionBox.classList.add('question');
-      questionBox.innerHTML = "\n                <h2 class=\"question__question\"></h2>\n                <fieldset class=\"question__options\">\n                    <legend>Choose one answer</legend>\n                    <input type=\"radio\" name=\"\"/>\n                    <label for=\"\"></label>\n                    <input type=\"radio\" name=\"\"/>\n                    <label for=\"\"></label>\n                    <input type=\"radio\" name=\"\"/>\n                    <label for=\"\"></label>\n                </div>\n            ";
-      questionList.append(questionBox);
-      document.querySelectorAll('.question__question')[i].innerText = examData[i].question;
-      var fieldsets = document.querySelectorAll('fieldset')[i];
-      var inputElems = fieldsets.querySelectorAll('input');
-      var labelElems = fieldsets.querySelectorAll('label');
-      var choices = examData[i].choices;
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
 
-      for (var j = 0; j < choices.length; j++) {
-        inputElems[j].value = choices[j];
-        inputElems[j].setAttribute('name', "question".concat(i + 1)); //  i not j
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
 
-        labelElems[j].setAttribute('for', "question".concat(i + 1));
-        labelElems[j].innerHTML = choices[j];
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
       }
     }
-  }
 
-  ; //display first, interval will start after one second has elapsed
-  //interval: check every second how much time left
+    cssTimeout = null;
+  }, 50);
+}
 
-  function startCountDown(time) {
-    var now = Date.now(); //ms
-
-    var target = now + time * 1000; //  seconds to ms, timestamp
-
-    var targetFormatted = Math.round((target - now) / 1000); //  ms to s 
-
-    displayCountdown(targetFormatted);
-    var interval = setInterval(function () {
-      var timeLeft = target - Date.now();
-      var timeLeftFormatted = Math.abs(Math.round(timeLeft / 1000));
-      displayCountdown(timeLeftFormatted);
-
-      if (timeLeft < 0) {
-        clearInterval(interval);
-        var score = getScore();
-        updateScoreboard(score);
-        clearFields();
-        hideQuestions();
-      }
-    }, 1000);
-  }
-
-  function displayCountdown(time) {
-    var minutesLeft = Math.floor(time / 60);
-    var secondsLeft = time % 60;
-    var display = "".concat(minutesLeft, ":").concat(secondsLeft.toString().padStart(2, 0));
-    var displayCountdown = document.querySelector('.countdown');
-    displayCountdown.textContent = display;
-    displayCountdown.style.position = 'fixed';
-    displayCountdown.style.left = '50%';
-    displayCountdown.style.top = '10%';
-  }
-
-  function hideInstructions() {
-    document.querySelector('.instructions').style.display = 'none'; //show submit btn
-
-    submitBtn.style.display = 'block';
-  }
-
-  function validate() {
-    var options = Array.from(document.querySelectorAll('input'));
-    var answers = options.filter(function (el) {
-      return el.checked;
-    });
-
-    if (answers.length !== examData.length) {
-      return confirm('You did not answer all questions. Are you sure you want to submit your exam?');
-    } else return true;
-  }
-
-  function getScore() {
-    var score = 0;
-    var options = Array.from(document.querySelectorAll('input'));
-    var answer = options.filter(function (el) {
-      return el.checked;
-    });
-
-    for (var i = 0; i < answer.length; i++) {
-      if (answer[i].value === examData[i].answer) score++;
-    }
-
-    return score;
-  }
-
-  function updateScoreboard(score) {
-    document.querySelector('.score__title').innerText = "Your score is: ".concat(score, " / ").concat(examData.length);
-    score >= Math.ceil(examData.length / 2) ? document.querySelector('.score__evaluation').innerText = "You passed the exam." : document.querySelector('.score__evaluation').innerText = "You failed the exam.";
-  }
-
-  function clearFields() {
-    var inputs = Array.from(document.querySelectorAll('input'));
-    inputs.filter(function (input) {
-      return input.checked;
-    }).forEach(function (input) {
-      return input.checked = false;
-    });
-  }
-
-  function hideQuestions() {
-    document.querySelector('form').style.display = 'none';
-    document.querySelector('.countdown').style.display = 'none';
-  }
-})();
-},{"./exam-data/question.json":"assets/exam-data/question.json"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -477,5 +388,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","assets/index.js"], null)
-//# sourceMappingURL=/assets.8f4429fc.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/index.js.map
