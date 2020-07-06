@@ -186,7 +186,7 @@ module.exports = [{
     }
   }
 
-  ; //display first, interval will start after one second has elapsed
+  ; //display first target first, interval will start after one second has elapsed
   //interval: check every second how much time left
 
   function startCountDown(time) {
@@ -301,7 +301,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51749" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54963" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -52,7 +52,7 @@
             }
         }   
     };
-    //display first, interval will start after one second has elapsed
+    //display first target first, interval will start after one second has elapsed
     //interval: check every second how much time left
     function startCountDown(time){
         const now    = Date.now();  //ms
